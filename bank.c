@@ -1,10 +1,24 @@
-/* Terminal Banking System
-Enables the user to Create an acc., Deposit, Withdraw, Save ,
-Send ,Recieve and Get a loan( unique loan estmator)
+/*  
+    ==== Terminal Banking System ====
+    => Enables the user to Create an acc., Deposit, Withdraw, Save,
+    => Send, Recieve and Get a loan( unique loan estimator)
+
 */
 
 #include <stdio.h>
 #include <string.h>
+
+#define MAX_USERS 10
+#define NAME_LENGTH 16
+
+// Parallel Arrays (Global Variables)
+char names[MAX_USERS][NAME_LENGTH];
+int ages[MAX_USERS];
+int passwords[MAX_USERS];
+int balances[MAX_USERS]; // Replaces global 'amount'
+
+int userCount = 0; // Tracks total registered users
+int currentUserIndex = -1; // Tracks who is currently logged in ( -1 means none )
 
 
 // Global Variables
