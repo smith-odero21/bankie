@@ -21,29 +21,28 @@ int userCount = 0; // Tracks total registered users
 int currentUserIndex = -1; // Tracks who is currently logged in ( -1 means none )
 
 
-// Global Variables
-char name[16];
-int age, password;
-int amount = 0;
-
 // Create account
-int myAccount(){
+void myAccount(){
     printf("Enter your name: ");
-    scanf("%s", name);
+    scanf("%s", names[userCount]);
 
     printf("Enter your age: ");
-    scanf("%d", &age);
+    scanf("%d", &ages[userCount]);
 
     printf("Enter your password: ");
-    scanf("%d", &password);
+    scanf("%d", &passwords[userCount]);
 
-    return 0;
+    balances[userCount] = 0; // Initialize balance to 0
+
+    userCount++; // Move to the next slot for the next user
+    printf("\t\t=== SignUp Successful ===\n\t\tPress Enter Continue.....");
+
 
 }
 
-// login 
+// login - returns the index of the logged-in user, pr -1 if failed
 int login() {
-    char inputName[16];
+    char inputName[NAME_LENGTH];
     int inputPassword;
 
     printf("Enter your username: ");
@@ -52,112 +51,123 @@ int login() {
     printf("Enter your password: ");
     scanf("%d", &inputPassword);
 
-    if(strcmp(inputName, name) == 0 && inputPassword == password) {
-        return 1;
-    } else {
-        return 0;
+    // Search through all existing users
+    for (int i = 0; i < userCount; i++) {
+        if (strcmp(inputName, names[i]) == 0 && inputPassword == passwords[i]) {
+            return i;
+        }
     }
+    return -1; // Login failed
+
 }
 
 // Deposit
-int depo(int amount) {
+void depo() {
     int dep;
     printf("Enter your Deposit: ");
     scanf("%d", &dep);
     
-    int new_balance = amount + dep;
-    printf("You have successfully Deposited %d\nBalance %d\n\n\tPress Enter to continue....", dep, new_balance);
+    balances[currentUserIndex] += dep; // Update current user's balance
+    printf("You have successfully Deposited %d\nBalance %d\n\n\tPress Enter to continue....", dep, balances[currentUserIndex]);
+
     int c;
     while ((c = getchar()) != '\n' && c != EOF);
     getchar();
     printf("\033[H\033[J");
 
-    return new_balance;
  }
 
 // Withdraw
-int myWithdraw(int amount){
+void myWithdraw(){
     int withdraw;
 
     printf("Enter amount to withdraw: ");
     scanf("%d", &withdraw);
 
-    if (withdraw > amount){
+    if (withdraw > balances[currentUserIndex]){
         printf("Insufficient funds\n");
-        return amount;
-
+        return;
     }
 
-    int new_balance = amount - withdraw;
-    printf("You have successfully withdrawn %d\nBalance %d\n\n\tPress Enter to continue.....\n", withdraw,new_balance);
+    balances[currentUserIndex] -= withdraw; // Deduct from current user balance
+    printf("You have successfully withdrawn %d\nBalance %d\n\n\tPress Enter to continue.....\n", withdraw,balances[currentUserIndex]);
+
     int c;
     while ((c = getchar()) != '\n' && c != EOF);
     getchar();
     printf("\033[H\033[J");
-    
-    return new_balance;
 
 }
 
 
 int main() {
-    myAccount();
-    printf("\t\t=== SignUp Successful ===\n\t\tPress Enter to continue......");
+    int mainChoice;
 
-    // Pauses the screen
-    getchar();
-    getchar();
-
-    // Clear the screen
-    printf("\033[H\033[J");
-
-    int loginStatus = 0;
-
-    loginStatus = login();
+    while(1) {
+        printf("\n\t\t==== WELCOME TO THE BANK TERMINAL ====\n");
+        printf("1. Register New Account\n");
+        printf("2. Login\n");
+        printf("3. Exit\n");
+        printf("Select an option: ");
+        scanf("%d", &mainChoice);
+        printf("\033[H\033[J"); /// CLEAR SCREEN
     
-    
-    int withdrawAmount = 0;
+        if (mainChoice == 1) {
+            myAccount();
+            printf("\t\t=== SignUp Successful ===\n\t\tPress Enter to continue......");
 
+            // Pauses the screen
+            getchar();
+            getchar();
 
-    if (loginStatus == 1) {
-        printf("Login successful! Welcome, %s.\n\n\tPress Enter to continue......", name);
-        // clear screen 
-        int c;
-        while ((c = getchar()) != '\n' && c != EOF);;
-        getchar();
-        printf("\033[H\033[J");
+            // Clear the screen
+            printf("\033[H\033[J");
+        } else if (mainChoice == 2) {
+            currentUserIndex = login();
 
-        do{
-            printf("\n\n\t\t=== BANK SYSTEM ===\n1.Deposit\n2.Withdraw\n3.Send\n4.Save\n5.Get a loan\n");
-            int option;
+            if (currentUserIndex != -1) {
+                printf("Login successful! Welcome, %s. \n\n\tPress Enter to continue.....", names[currentUserIndex]);
 
-            //deposit = depo(amount);
-            printf("\tBalance %d\n", amount);
-            printf("\tSelect an option: ");
-            scanf("%d", &option);
+                int c;
+                while ((c = getchar()) != '\n' && c != EOF);
+                getchar();
+                printf("\033[H\033[J");
 
+                int banking = 1;
+                while (banking) {
+                    printf("\n\n\t\t=== BANK SYSTEM (%s) ===\n1.Deposit\n2.Withdraw\n3.Logout\n", names[currentUserIndex]);
+                    int option;
 
-            switch(option) {
-                case 1:
-                    amount = depo(amount);
-                    
-                    break;
-                case 2:
-                    amount = myWithdraw(amount);
-                    break;
-                default:
-                    printf("\n\t\t=== Goodbye===\n\n");
-                    return 0;
+                    printf("\tBalance %d\n", balances[currentUserIndex]);
+                    printf("\tSelect an option: ");
+                    scanf("%d", &option);
+
+                    switch(option) {
+                        case 1:
+                            depo();
+                            break;
+                        case 2:
+                            myWithdraw();
+                            break;
+                        default:
+                            printf("\n\n\t\t=== Loggin Out...... ===\n\n");
+                            currentUserIndex = -1; // Reset active user index
+                            banking = 0; // Break out of the banking loop
+                            break;
+
+                    }
+                }
+            } else {
+                printf("\n\n\t\t!!!ACCESS DENIED!!!\n\n");
             }
-            
-        } while (loginStatus == 1);
-
-    } else {
-        printf("\033[H\033[J");
-        printf("\n\n\t\t!!!ACCESS DENIED!!!\n\n");
-        return 0;
-        
+        }
+        else {
+            printf("Goodbye\n");
+            break;
+        }
     }
+
+    
 
     
     return 0;
