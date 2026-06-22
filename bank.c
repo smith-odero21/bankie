@@ -35,7 +35,7 @@ void myAccount(){
     balances[userCount] = 0; // Initialize balance to 0
 
     userCount++; // Move to the next slot for the next user
-    printf("\t\t=== SignUp Successful ===\n\t\tPress Enter Continue.....");
+    printf("\n\n\t\t=== SignUp Successful ===\n\t\tPress Enter Continue.....");
 
 
 }
@@ -114,7 +114,7 @@ int main() {
     
         if (mainChoice == 1) {
             myAccount();
-            printf("\t\t=== SignUp Successful ===\n\t\tPress Enter to continue......");
+            
 
             // Pauses the screen
             getchar();
@@ -150,10 +150,15 @@ int main() {
                             myWithdraw();
                             break;
                         default:
-                            printf("\n\n\t\t=== Loggin Out...... ===\n\n");
+                            printf("\n\n\t\t=== Loggin Out...... ===\n\nPress Enter To Continue\n");
                             currentUserIndex = -1; // Reset active user index
                             banking = 0; // Break out of the banking loop
+                            int c;
+                            while ((c = getchar()) != '\n' && c != EOF);
+                            getchar();
+                            printf("\033[H\033[J");
                             break;
+
 
                     }
                 }
