@@ -125,6 +125,18 @@ void transferMoney() {
         return;
     }
 
+    balances[currentUserIndex] -= amount;
+    balances[recipientIndex] += amount;
+
+    printf("Success: Transferred %d to %s.\n", amount, names[recipientIndex]);
+    printf("Your new balance is %d\n", balances[currentUserIndex]);
+
+    // Clear buffer and pause screen
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF);
+    getchar();
+    printf("\033[H\033[J");
+ 
 }
 
 int main() {
@@ -162,7 +174,7 @@ int main() {
 
                 int banking = 1;
                 while (banking) {
-                    printf("\n\n\t\t=== BANK SYSTEM (%s) ===\n1.Deposit\n2.Withdraw\n3.Logout\n", names[currentUserIndex]);
+                    printf("\n\n\t\t=== BANK SYSTEM (%s) ===\n1.Deposit\n2.Withdraw\n3.Send Money\n4.Logout\n", names[currentUserIndex]);
                     int option;
 
                     printf("\tBalance %d\n", balances[currentUserIndex]);
@@ -175,6 +187,9 @@ int main() {
                             break;
                         case 2:
                             myWithdraw();
+                            break;
+                        case 3:
+                            transferMoney();
                             break;
                         default:
                             printf("\n\n\t\t=== Loggin Out...... ===\n\nPress Enter To Continue\n");
