@@ -38,6 +38,7 @@ void myAccount(){
     printf("\n\n\t\t=== SignUp Successful ===\n\t\tPress Enter Continue.....");
 
 
+
 }
 
 // login - returns the index of the logged-in user, pr -1 if failed
@@ -99,6 +100,32 @@ void myWithdraw(){
 
 }
 
+// Send money dynamically from the logged-in user to anaother
+void transferMoney() {
+    char recipientName[NAME_LENGTH];
+    int amount;
+    int recipientIndex = -1;
+
+    printf("Enter recipient's username: ");
+    scanf("%s", recipientName);
+
+    // 1. Search for recipient index
+    for (int i = 0; i < userCount; i++) {
+        if (strcmp(recipientName, names[i]) == 0) {
+            recipientIndex = i;
+            break;
+        }
+    }
+
+    printf("Enter amount to send: ");
+    scanf("%d", &amount);
+
+    if (amount > balances[currentUserIndex]) {
+        printf("Error: Insuffiecient funds. Your balance is %d\n", balances[currentUserIndex]);
+        return;
+    }
+
+}
 
 int main() {
     int mainChoice;
@@ -167,7 +194,7 @@ int main() {
             }
         }
         else {
-            printf("Goodbye\n");
+            printf("\n\n\t\t====== GOODBYE =====\n\n");
             break;
         }
     }
